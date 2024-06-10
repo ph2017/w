@@ -1,0 +1,10 @@
+.tags-view {
+  height: 100%;
+}
+.tags-view .ant-card {
+  height: 100%;
+}
+
+.tags-view .ant-card .ant-card-body{
+  height: 100%;
+}

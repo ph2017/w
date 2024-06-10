@@ -11,16 +11,20 @@ import { Button, Layout, Menu, theme, Dropdown, MenuProps, message, Space } from
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../locales';
+import { LanguageContext } from '../../context/language-context';
 import './layout.css';
 
 const { Header, Sider, Content } = Layout;
 
 const LanguageSwitch = () => {
-    const [language, setLanguage] = useState(i18n.language);
+    // const [language, setLanguage] = useState(i18n.language);
+    const languageContext = React.useContext(LanguageContext);
+    const language = languageContext?.language;
+    const setLanguage = languageContext?.setLanguage;
 
     const onClick: MenuProps['onClick'] = ({ key }) => {
         i18n.changeLanguage(key);
-        setLanguage(key);
+        setLanguage && setLanguage(key as 'zh-CN' | 'en-US');
         message.info(`Click on item ${key}`);
     };
 

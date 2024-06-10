@@ -5,12 +5,16 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Translation } from 'react-i18next';
 import NotFoundPage from './views/404';
-import DatasPage from './views/datas';;
+import DatasPage from './views/datas';
+import TagsPage from './views/tags';
+import { LanguageProvider } from './context/language-context.tsx';
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App></App>,
+        element: (<LanguageProvider>
+          <App></App>
+        </LanguageProvider>),
         errorElement: <NotFoundPage></NotFoundPage>,
         children: [
             {
@@ -27,7 +31,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'tags',
-                element: <div>tag</div>,
+                element: <TagsPage></TagsPage>,
             },
         ],
     },

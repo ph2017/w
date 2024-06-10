@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 const { addData, getData, editData, delData } = require('./controller/data');
-const { addTag, getTags, editTag, delTag } = require('./controller/tag');
+const { addTag, getTags, editTag, delTag, delTagBatch } = require('./controller/tag');
 const { setLang, getLang } = require('./controller/lang');
 
 const router = new Router();
@@ -20,5 +20,6 @@ router.post('/api/tags', addTag);
 router.get('/api/tags', getTags);
 router.put('/api/tags', editTag);
 router.delete('/api/tags', delTag);
+router.put('/api/delTagsBatch', delTagBatch);
 
 module.exports = router;

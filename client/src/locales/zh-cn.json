@@ -25,5 +25,9 @@
   "updateFailed": "更新失败",
   "create": "创建",
   "update": "更新",
-  "addData": "添加数据"
+  "addData": "添加数据",
+  "editData": "编辑数据",
+  "addTag": "添加标签",
+  "confirmToDelete": "确定删除",
+  "deleteTags": "删除标签"
 }

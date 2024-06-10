@@ -112,9 +112,44 @@ async function delTag(ctx) {
   }
 }
 
+/**
+ * 批量删除标签接口处理函数
+ * @param {object} ctx - Koa 上下文对象
+ */
+async function delTagBatch(ctx) {
+  try {
+    const { ids } = ctx.request.body;
+    console.log('ids = ', ctx.request.body)
+
+    if (!ids) {
+      throw { status: 400, message: 'ids不能为空' };
+    }
+
+    const { data } = await dataService.getData();
+    const inUsedTag = ids.findIndex(id => data.some(item => item.tags.includes(id)));
+
+    if (inUsedTag > -1) {
+      throw { status: 400, message: `标签[${inUsedTag + 1}]已被使用，不能删除` };
+    }
+
+    const result = await tagsService.delTagBatch(ids);
+
+    const responseData = {
+      code: 204,
+      msg: '删除成功',
+      data: result,
+    };
+
+    ctx.body = responseData;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addTag,
   getTags,
   editTag,
   delTag,
+  delTagBatch
 };

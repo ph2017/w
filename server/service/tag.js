@@ -88,9 +88,25 @@ async function delTag(id) {
   }
 }
 
+/**
+ * 批量删除标签
+ * @param {string[]} ids - 标签ID数组
+ */
+async function delTagBatch(ids) {
+  try {
+    const tagsList = await read(FILE_NAME);
+
+    const newTagsList = tagsList.filter(tag => ids.indexOf(tag.id) === -1);
+    saveTag(newTagsList);
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   addTag,
   getTags,
   editTag,
   delTag,
+  delTagBatch
 };

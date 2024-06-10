@@ -23,5 +23,9 @@
   "noData": "No Data",
   "noPermission": "No Permission",
   "noPermissionTip": "You have no permission to access this page",
-  "addData": "Add Data"
+  "addData": "Add Data",
+  "editData": "Edit Data",
+  "addTag": "Add Tag",
+  "confirmToDelete": "Confirm Delete",
+  "deleteTags": "Delete Tags"
 }
