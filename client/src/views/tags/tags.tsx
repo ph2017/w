@@ -3,7 +3,7 @@
  */
 import React, { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react';
 import { Button, Form, Input, Space, Popconfirm, Card, Table, Tag, Modal, message } from 'antd';
-import type { GetProp, TableProps } from 'antd';
+import type { TableProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import http from '../../utils/http';
@@ -103,13 +103,16 @@ const TagEditModal = forwardRef((props: TagEditModalProps, ref) => {
         form
     }))
 
-    const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    const handleOk = () => {
         form.validateFields().then(values => {
-            props.onOk?.(values);
+            props.onOk?.({
+                ...values,
+                id: form.getFieldValue('id'),
+            })
         });
     };
 
-    const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+    const handleCancel = () => {
         props.onCancel?.();
     };
     const title = form.getFieldValue('id') ? t('editData') : t('addData');
@@ -155,7 +158,6 @@ const TagsView: React.FC = () => {
         setLoading(true);
         http('/api/tags')
             .then(({ data }) => {
-                debugger
                 // @ts-ignore
                 tagTable?.current?.setSelectedRowKeys([]) // 清空选中项
                 setData(data);
@@ -173,7 +175,6 @@ const TagsView: React.FC = () => {
     const [delLoaing, setDelLoading] = useState(false);
     const onDeleteBatch = () => {
         setDelLoading(true);
-        debugger
         http({
             url: '/api/delTagsBatch',
             method: 'put',
@@ -181,6 +182,7 @@ const TagsView: React.FC = () => {
                 ids: selectedRows,
             },
         })
+            // @ts-ignore
             .then(({ msg }) => {
                 message.success(msg || t('deleteSuccess'));
                 fetchTagsData();
@@ -191,38 +193,40 @@ const TagsView: React.FC = () => {
     };
     const [open, setOpen] = useState(false);
     const onOk = (values: any): Promise<void> => {
-        setTagEditLoading(true);
-        if (values.id) {
-            // 修改
-            return http({
-                url: '/api/tags',
-                method: 'put',
-                data: values,
+    setTagEditLoading(true);
+    if (values.id) {
+        // 修改
+        return http({
+            url: '/api/tags',
+            method: 'put',
+            data: values,
+        })
+            .then(data => {
+                // @ts-ignore
+                message.success(data.msg);
+                setOpen(false);
+                fetchTagsData();
             })
-                .then(data => {
-                    message.success(data.msg);
-                    setOpen(false);
-                    fetchTagsData();
-                })
-                .finally(() => {
-                    setTagEditLoading(false);
-                });
-        } else {
-            // 新增
-            return http({
-                url: '/api/tags',
-                method: 'post',
-                data: values,
+            .finally(() => {
+                setTagEditLoading(false);
+            });
+    } else {
+        // 新增
+        return http({
+            url: '/api/tags',
+            method: 'post',
+            data: values,
+        })
+            .then(data => {
+                // @ts-ignore
+                message.success(data.msg);
+                setOpen(false);
+                fetchTagsData();
             })
-                .then(data => {
-                    message.success(data.msg);
-                    setOpen(false);
-                    fetchTagsData();
-                })
-                .finally(() => {
-                    setTagEditLoading(false);
-                });
-        }
+            .finally(() => {
+                setTagEditLoading(false);
+            });
+    }
     };
     const onCancel = () => {
         setOpen(false);
@@ -237,6 +241,7 @@ const TagsView: React.FC = () => {
                 id,
             },
         })
+            // @ts-ignore
             .then(({ msg }) => {
                 message.success(msg || t('deleteSuccess'));
                 fetchTagsData();
@@ -249,7 +254,7 @@ const TagsView: React.FC = () => {
     const tagEditModal = useRef(null);
 
     const onEdit = (id: string) => {
-        const editData = data?.find(item => item.id === id);
+        const editData = { ...data?.find(item => item.id === id) };
         // @ts-ignore
         tagEditModal.current?.form.setFieldsValue(editData);
         setOpen(true);
@@ -261,7 +266,6 @@ const TagsView: React.FC = () => {
     };
 
     const onSelectedRowChange = (selectedRowKeys: React.Key[]) => {
-        debugger
         setSelectedRows(selectedRowKeys);
     };
 

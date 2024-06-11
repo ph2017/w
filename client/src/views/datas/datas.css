@@ -1,0 +1,10 @@
+.datas-view {
+  height: 100%;
+}
+.datas-view .ant-card {
+  height: 100%;
+}
+
+.datas-view .ant-card .ant-card-body {
+  height: 100%;
+}

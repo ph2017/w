@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    GlobalOutlined,
     BarChartOutlined,
     TagsOutlined,
-    
+    SettingOutlined
 } from '@ant-design/icons';
-import { Button, Layout, Menu, theme, Dropdown, MenuProps, message, Space } from 'antd';
+import { Button, Layout, Menu, Dropdown, MenuProps, Space } from 'antd';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../locales';
 import { LanguageContext } from '../../context/language-context';
+import http from '../../utils/http';
 import './layout.css';
 
 const { Header, Sider, Content } = Layout;
 
 const LanguageSwitch = () => {
-    // const [language, setLanguage] = useState(i18n.language);
+    const { t } = useTranslation();
     const languageContext = React.useContext(LanguageContext);
     const language = languageContext?.language;
     const setLanguage = languageContext?.setLanguage;
@@ -25,7 +25,14 @@ const LanguageSwitch = () => {
     const onClick: MenuProps['onClick'] = ({ key }) => {
         i18n.changeLanguage(key);
         setLanguage && setLanguage(key as 'zh-CN' | 'en-US');
-        message.info(`Click on item ${key}`);
+        http({
+            url: '/api/lang',
+            method: 'post',
+            data: {
+                lang: key === 'zh-CN' ? 'zh' : 'en'
+            }
+        })
+        // message.info(`Click on item ${key}`);
     };
 
     const configOptions = [
@@ -43,14 +50,16 @@ const LanguageSwitch = () => {
 
     const items: MenuProps['items'] = [...configOptions];
 
-    const currentLanguage = configOptions.find(item => item && item.key === language)?.label;
+    // const currentLanguage = configOptions.find(item => item && item.key === language)?.label;
 
     return (
         <Dropdown menu={{ items, onClick }}>
             <Space className='language-item'>
-              <GlobalOutlined className='language-switch-icon' />
+              {/* <GlobalOutlined className='language-switch-icon' /> */}
+              <SettingOutlined className='language-switch-icon'/>
               <Space></Space>
-              <span>{currentLanguage}</span>
+              {/* <span>{currentLanguage}</span> */}
+              <span>{t('setting')}</span>
             </Space>
         </Dropdown>
     );
@@ -58,9 +67,9 @@ const LanguageSwitch = () => {
 
 const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
+    // const {
+    //     token: { colorBgContainer, borderRadiusLG },
+    // } = theme.useToken();
 
     const navigate = useNavigate();
 

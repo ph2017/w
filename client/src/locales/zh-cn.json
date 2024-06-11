@@ -29,5 +29,6 @@
   "editData": "编辑数据",
   "addTag": "添加标签",
   "confirmToDelete": "确定删除",
-  "deleteTags": "删除标签"
+  "deleteTags": "删除标签",
+  "setting": "设置"
 }
