@@ -129,7 +129,9 @@ async function delTagBatch(ctx) {
     const inUsedTag = ids.findIndex(id => data.some(item => item.tags.includes(id)));
 
     if (inUsedTag > -1) {
-      throw { status: 400, message: `标签[${inUsedTag + 1}]已被使用，不能删除` };
+      const { data = [] } = await tagsService.getTags();
+      const matchTag = data.find(item => item.id === ids[inUsedTag])
+      throw { status: 400, message: `标签[${matchTag.name}]已被使用，不能删除` };
     }
 
     const result = await tagsService.delTagBatch(ids);

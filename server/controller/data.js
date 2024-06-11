@@ -20,7 +20,6 @@ async function addData(ctx) {
     const { data: tagData } = await tagsService.getTags();
 
     const allTagsId = tagData.map(item => item.id);
-    console.log('allTagsId', allTagsId);
 
     if (tags.length > 0) {
       const isTagExist = tags.every(id => allTagsId.includes(id));
@@ -99,7 +98,45 @@ async function getData(ctx) {
  * @param {Object} ctx - Koa上下文对象
  */
 async function editData(ctx) {
-  return ctx;
+  try {
+    const { id = '', name = '', description = '', tags = [] } = ctx.request.body;
+    if (!id) {
+      throw { status: 400, message: '修改的数据id不能为空' };
+    }
+    if (!name || !description) {
+      throw { status: 400, message: 'name或description不能为空' };
+    }
+    if (name.length > 20) {
+      throw { status: 400, message: 'name长度不符合要求' };
+    }
+    const { data: tagData } = await tagsService.getTags();
+
+    const allTagsId = tagData.map(item => item.id);
+
+    if (tags.length > 0) {
+      const isTagExist = tags.every(id => allTagsId.includes(id));
+      if (!isTagExist) {
+        throw { status: 400, message: '标签不存在' };
+      }
+    }
+
+    const result = await dataService.getDataById(id);
+    if (!result) {
+      throw { status: 400, message: '修改的数据不存在' };
+    }
+
+    // 调用服务模块的新增数据函数
+    await dataService.editData(id, name, description, tags);
+    // 封装返回数据格式
+    const responseData = {
+      code: 200,
+      msg: '修改成功',
+    };
+    // 返回结果
+    ctx.body = responseData;
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**

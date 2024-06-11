@@ -33,15 +33,19 @@ async function getData(pageNo, pageSize, name, tags, startTime, endTime) {
 
     let filteredData = dataList.reverse(); //倒叙排列
 
-    console.log('dataList', dataList);
+    // console.log('dataList', dataList);
     // 根据名称进行过滤
     if (name) {
+      filteredData = filteredData.filter(item => item.name.includes(name));
     }
     // 根据标签进行过滤
     if (tags) {
+      const tagsArr = tags.split(',')
+      filteredData = filteredData.filter(item => item.tags.some(tag => tagsArr.indexOf(tag) > -1));
     }
     // 根据时间范围过滤
     if (startTime && endTime) {
+      filteredData = filteredData.filter(item => item.time <= endTime && item.time >= startTime);
     }
     // 计算总数
     const count = filteredData.length;
@@ -68,7 +72,16 @@ async function getData(pageNo, pageSize, name, tags, startTime, endTime) {
  */
 /* eslint-disable */  
 async function editData(id, name, description, tags) {
-
+  try {
+    const dataList = await read(FILE_NAME);
+    const matchData = dataList.find(item => item.id === id)
+    matchData.name = name;
+    matchData.description = description;
+    matchData.tags = tags;
+    save(dataList, FILE_NAME);
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**
@@ -90,10 +103,28 @@ async function delData(id) {
   }
 }
 
+/**
+ * 根据id查数据
+ * @param {string} id id字符串
+ * @returns 
+ */
+async function getDataById(id) {
+  try {
+    // 读取data.json文件中的数据
+    const dataList = await read(FILE_NAME);
+    const matchData = dataList.find(item => item.id === id)
+    // 返回查询结果
+    return matchData;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // 导出数据查询服务函数
 module.exports = {
   getData,
   addData,
   editData,
   delData,
+  getDataById
 };
